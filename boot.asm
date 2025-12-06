@@ -1,28 +1,24 @@
-mov ah, 0x0e ; Enter tty mode
+[org 0x7c00] ; offset address (where the BIOS loads the boot sector)
 
-mov al, "O"
-int 0x10
-mov al, "S"
-int 0x10
-mov al, " "
-int 0x10
-mov al, "L"
-int 0x10
-mov al, "O"
-int 0x10
-mov al, "A"
-int 0x10
-mov al, "D"
-int 0x10
-mov al, "E"
-int 0x10
-mov al, "D"
-int 0x10
-mov al, "!"
-int 0x10
+mov si, msg     ; SI = pointer to string
+mov ah, 0x0e    ; Enter tty mode (BIOS)
 
-jmp $ ; Infinite Loop
+.print_loop:
+    lodsb       ; AL = [SI], SI++ - Load one character in AL, then increment SI
 
+    ; Compare the value in AL to 0
+    ; If the value is the same, then finish the execution through done
+    cmp al, 0
+    je done
+    
+    ; Write AL and continue the loop (if the print isn't done)
+    int 0x10
+    jmp .print_loop
+
+done:
+    jmp $       ; Loop
+
+msg db "OS LOADED!", 0  ; null-terminated string (so it can end)
 
 ; Placing 510 zeros minus the size of the code above
 ; Then boot signature / magic number (16-bit / 2 bytes)
