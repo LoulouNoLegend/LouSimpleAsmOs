@@ -71,6 +71,7 @@ shell_loop:
 ; COMMANDS RUN
 .run_meow:
     call shell_cc_meow
+    call newline_tty
     jmp shell_loop
 ;-------------------
 
